@@ -1,0 +1,52 @@
+# === Secrets / Environment ===
+.env
+.env.*
+!.env.example
+
+# === Python ===
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# === ML model artifacts (regenerable) ===
+ml/models/*.pkl
+ml/models/*.joblib
+ml/__pycache__/
+
+# === Node.js / Next.js ===
+dashboard/node_modules/
+dashboard/.next/
+dashboard/out/
+dashboard/build/
+dashboard/.eslintcache
+dashboard/*.tsbuildinfo
+dashboard/next-env.d.ts
+
+# === Logs & runtime data ===
+logs/
+*.log
+
+# === Graphify / generated knowledge graph ===
+graphify-out/
+
+# === OS / editor ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Dokumen Word build artifacts ===
+*.docx#
+~$*.docx

@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # Database PostgreSQL untuk menyimpan data traffic, devices, dan alerts
+  postgres:
+    image: postgres:15-alpine
+    container_name: ung_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-network_guard}
+      POSTGRES_USER: ${DB_USER:-guard_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-guard_secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    networks:
+      - ung_network
+
+  # Mosquitto MQTT Broker (jika ingin dijalankan via container)
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: ung_mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    networks:
+      - ung_network
+
+  # Grafana Dashboard Monitoring
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ung_grafana
+    restart: unless-stopped
+    ports:
+      - "3002:3000"   # host 3002 agar tidak bentrok dengan Next.js (3000/3001)
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - postgres
+    networks:
+      - ung_network
+
+volumes:
+  postgres_data:
+  mosquitto_data:
+  mosquitto_log:
+  grafana_data:
+
+networks:
+  ung_network:
+    driver: bridge

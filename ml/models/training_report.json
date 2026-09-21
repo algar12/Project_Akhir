@@ -1,0 +1,103 @@
+{
+  "isolation_forest": {
+    "model": "IsolationForest",
+    "n_samples": 3479,
+    "n_features": 12,
+    "n_estimators": 200,
+    "contamination": 0.05,
+    "n_marked_anomaly": 174,
+    "anomaly_pct": 5.0,
+    "score_mean": -0.3845,
+    "score_std": 0.1018,
+    "score_min": -0.7723,
+    "score_max": -0.3125,
+    "trained_at": "2026-09-22T00:29:13.748142"
+  },
+  "random_forest": {
+    "model": "RandomForest",
+    "n_samples": 7979,
+    "n_features": 12,
+    "n_estimators": 150,
+    "max_depth": 15,
+    "classes": [
+      "icmp_flood",
+      "mqtt_anomaly",
+      "normal",
+      "port_scan",
+      "syn_flood",
+      "traffic_spike"
+    ],
+    "cv_metrics": {
+      "test_accuracy": 0.9996,
+      "test_f1_weighted": 0.9996,
+      "test_precision_weighted": 0.9996,
+      "test_recall_weighted": 0.9996
+    },
+    "train_report": {
+      "icmp_flood": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 900.0
+      },
+      "mqtt_anomaly": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 900.0
+      },
+      "normal": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 3479.0
+      },
+      "port_scan": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 900.0
+      },
+      "syn_flood": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 900.0
+      },
+      "traffic_spike": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 900.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 7979.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 7979.0
+      }
+    },
+    "feature_importance": {
+      "packet_count": 0.06153,
+      "byte_count": 0.06536,
+      "connection_count": 0.065499,
+      "packet_rate": 0.055868,
+      "byte_rate": 0.05242,
+      "avg_packet_size": 0.118961,
+      "unique_dst_ports": 0.173653,
+      "unique_dst_ips": 0.009577,
+      "proto_tcp_ratio": 0.102883,
+      "proto_udp_ratio": 0.036661,
+      "proto_icmp_ratio": 0.10241,
+      "mqtt_ratio": 0.155179
+    },
+    "trained_at": "2026-09-22T00:29:15.813720"
+  }
+}

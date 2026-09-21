@@ -1,0 +1,76 @@
+{
+  "evaluated_at": "2026-09-21T23:55:05.443089",
+  "period": {
+    "since": "2026-09-21 23:38:08",
+    "until": "2026-09-22 00:07:28"
+  },
+  "n_predictions": 3,
+  "n_alerts": 3,
+  "n_scenarios": 5,
+  "binary_metrics": {
+    "TP": 3,
+    "TN": 0,
+    "FP": 0,
+    "FN": 0,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "fpr": 0
+  },
+  "multi_class_report": {
+    "icmp_flood": {
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.5,
+      "support": 3.0
+    },
+    "micro avg": {
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.5,
+      "support": 3.0
+    },
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.5,
+      "support": 3.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.5,
+      "support": 3.0
+    }
+  },
+  "detection_latency": {
+    "n_detected": 3,
+    "mean_sec": 12.0,
+    "median_sec": 12.0,
+    "p95_sec": 12.0,
+    "min_sec": 12.0,
+    "max_sec": 12.0,
+    "latencies_sec": [
+      12.0,
+      12.0,
+      12.0
+    ]
+  },
+  "if_score_stats": {
+    "mean": -0.7271,
+    "std": 0.0356,
+    "min": -0.7529,
+    "max": -0.6865,
+    "p5": -0.7518,
+    "median": -0.7419
+  },
+  "label_distribution": {
+    "icmp_flood": 3
+  },
+  "prediction_distribution": {
+    "port_scan": 1,
+    "syn_flood": 1,
+    "icmp_flood": 1
+  }
+}

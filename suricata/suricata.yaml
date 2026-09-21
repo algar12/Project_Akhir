@@ -1,0 +1,75 @@
+%YAML 1.1
+---
+# ==============================================================================
+# suricata.yaml — Unified Network Guard (IoT Defense Lab)
+# ==============================================================================
+# Konfigurasi Suricata untuk demo/testbed:
+#   - Sniff interface aktif (CAPTURE_INTERFACE di .env, default enp9s0)
+#   - Memuat rules custom di suricata/rules/local.rules (14 SID: 1000001–1000041)
+#   - Output EVE JSON ke /var/log/suricata/eve.json (dibaca EveParser detection)
+#
+# Menjalankan (butuh sudo — raw socket):
+#   sudo suricata -c suricata/suricata.yaml -i enp9s0
+# atau via helper:
+#   sudo bash scripts/start_suricata.sh
+#
+# Catatan: Sniffer Scapy (collector) dan Suricata dapat berjalan bersamaan
+# pada interface yang sama — keduanya hanya membaca paket.
+# ==============================================================================
+
+# ─── Mode Capture ──────────────────────────────────────────────────────────────
+# Interface di-override via CLI (-i). AF_PACKET = kernel capture (bukan tap).
+af-packet:
+  - interface: enp9s0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
+    checksum-checks: no
+
+# Fallback bila AF_PACKET gagal (mis. tanpa root) — tidak akan dipakai saat sudo.
+pcap:
+  - interface: enp9s0
+
+# ─── Rules ─────────────────────────────────────────────────────────────────────
+default-rule-path: rules
+
+rule-files:
+  - local.rules
+
+# ─── Output: EVE JSON (satu event per baris) ───────────────────────────────────
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      # Semua event (alert, flow, stats) — EveParser hanya memproses event_type=alert
+      types:
+        - alert:
+            payload: no
+            metadata: no
+        - flow:
+            enabled: no
+        - stats:
+            enabled: no
+
+# ─── Logging (file yang sama dipakai debug) ────────────────────────────────────
+logging:
+  default-log-level: info
+  outputs:
+    - console:
+        enabled: yes
+    - file:
+        enabled: no
+
+# ─── Performa ──────────────────────────────────────────────────────────────────
+# Auto-detect core CPU agar tetap ringan di mesin demo (Ryzen 5, 6 core)
+threading:
+  set-cpu-affinity: yes
+  cpu-affinity:
+    - management-cpu-set:
+        cpu: [0]
+    - receive-cpu-set:
+        cpu: [1, 2, 3, 4, 5]
+  detect-thread-ratio: 1.0

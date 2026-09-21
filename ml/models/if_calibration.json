@@ -1,0 +1,7 @@
+{
+  "threshold": -0.6047313501122277,
+  "score_min": -0.8028781987915271,
+  "score_max": -0.31253633954798854,
+  "n_samples": 11458,
+  "generated_from": "existing model + normal.csv + labeled.csv (no retrain)"
+}

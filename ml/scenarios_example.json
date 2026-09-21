@@ -1,0 +1,49 @@
+[
+  {
+    "start": "2024-01-15T09:00:00",
+    "end":   "2024-01-15T09:05:00",
+    "label": "normal",
+    "_note": "Skenario S1: Traffic normal — semua ESP32 mengirim telemetri biasa"
+  },
+  {
+    "start": "2024-01-15T09:05:00",
+    "end":   "2024-01-15T09:07:00",
+    "label": "traffic_spike",
+    "source_ip": "192.168.20.10",
+    "_note": "Skenario S2: Traffic spike — lonjakan paket dari attacker node"
+  },
+  {
+    "start": "2024-01-15T09:10:00",
+    "end":   "2024-01-15T09:13:00",
+    "label": "port_scan",
+    "source_ip": "192.168.20.10",
+    "_note": "Skenario S3: Port scanning — nmap -sS dari attacker subnet"
+  },
+  {
+    "start": "2024-01-15T09:15:00",
+    "end":   "2024-01-15T09:18:00",
+    "label": "syn_flood",
+    "source_ip": "192.168.20.10",
+    "_note": "Skenario S4: SYN flood — hping3 -S --flood ke target IoT"
+  },
+  {
+    "start": "2024-01-15T09:20:00",
+    "end":   "2024-01-15T09:22:00",
+    "label": "icmp_flood",
+    "source_ip": "192.168.20.10",
+    "_note": "Skenario S4b: ICMP flood — ping flood ke subnet IoT"
+  },
+  {
+    "start": "2024-01-15T09:25:00",
+    "end":   "2024-01-15T09:27:00",
+    "label": "mqtt_anomaly",
+    "source_ip": "192.168.20.10",
+    "_note": "Skenario S5 (opsional): Unauthorized MQTT client dari attacker"
+  },
+  {
+    "start": "2024-01-15T09:30:00",
+    "end":   "2024-01-15T09:35:00",
+    "label": "normal",
+    "_note": "Skenario S6: Kembali normal — verifikasi sistem pulih"
+  }
+]
