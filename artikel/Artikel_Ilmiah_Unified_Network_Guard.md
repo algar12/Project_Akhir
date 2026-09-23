@@ -8,7 +8,7 @@
 
 ## Abstrak
 
-Adopsi *Internet of Things* (IoT) telah tumbuh menjadi tulang punggung digitalisasi pada domain pemantauan lingkungan, otomasi industri, hingga permukiman cerdas, namun pertumbuhan tersebut tidak diimbangi penguatan keamanan pada sisi perangkat [1], [2]. Pada lapisan paling dasar ekosistem tersebut, mikrokontroler kelas *System-on-Chip* seperti Espressif ESP32 yang menjadi tulang punggung node sensor justru memiliki keterbatasan memori (SRAM ratusan kilobyte) dan kapasitas komputasi yang tidak memungkinkan dijalankannya *host-based firewall*, enkripsi tingkat lanjut, maupun *agent* keamanan konvensional [1], [3]. Kondisi ini menjadikan node IoT sebagai titik rawan yang dapat dieksploitasi melalui vektor spesifik seperti *Port Scanning*, *SYN Flooding*, *ICMP Flooding*, dan penyalahgunaan laju pesan protokol *Message Queuing Telemetry Transport* (*MQTT Rate Abuse*) [2]. Pendekatan keamanan yang masih bergantung pada komputasi *cloud* terpusat memperburuk situasi karena menambah latensi deteksi, membebani *bandwidth* hulu, serta menimbulkan risiko privasi terhadap data telemetri internal [3], [5]. Sebagai jawaban atas permasalahan tersebut, penelitian ini mengusulkan dan mengimplementasikan **Platform Unified Network Guard (UNG)**, sebuah platform pemantauan dan pertahanan keamanan jaringan IoT berbasis *Edge Computing* yang menempatkan seluruh simpul deteksi pada komputer lokal di dalam jaringan yang dipertahankan [4], [5]. UNG menerapkan strategi deteksi *hybrid* tiga lapis yang saling melengkapi: (1) *Signature-Based Intrusion Detection System* menggunakan *engine* Suricata [8] dengan 14 aturan tanda tangan kustom (SID 1000001–1000041) yang menjangkau serangan *reconnaissance*, *flooding*, penyalahgunaan MQTT, hingga *brute-force*; (2) *Rule-Based Threshold Engine* berbasis antrean geser (*sliding window* `collections.deque`) dengan lima aturan kuantitatif—`PORT_SCAN`, `SYN_FLOOD` (berbasis penanda paket SYN asli, `is_syn`), `ICMP_FLOOD`, `TRAFFIC_SPIKE`, dan `MQTT_RATE_ABUSE`; serta (3) *Machine Learning Anomaly Detection* tanpa pengawasan menggunakan algoritma *Isolation Forest* [6] (200 pohon, *contamination* 0,05) yang diperkaya model klasifikasi terbimbing *Random Forest* (150 pohon, 6 kelas serangan) terhadap 12 fitur agregasi trafik per IP sumber dalam jendela waktu 10 detik. Platform divalidasi pada *testbed* laboratorium nyata yang terdiri atas 5 node ESP32 [7] (192.168.10.101–105), segmen router IoT terisolasi (192.168.10.0/24), dan sub-jaringan pengujian penyerang (192.168.20.0/24), dengan seluruh beban kerja—penangkapan paket berbasis Scapy [10] dengan filter Berkeley Packet Filter (BPF), inferensi ML, broker Mosquitto [9], basis data PostgreSQL, layanan REST/WebSocket FastAPI, dan visualisasi *dashboard* Next.js 16 + React 19—dieksekusi secara lokal pada Edge PC berspesifikasi AMD Ryzen 5 5500GT (RAM 8 GB). Hasil evaluasi empiris menunjukkan bahwa sistem *hybrid* UNG mampu mendeteksi serangan siber dan deviasi trafik dengan akurasi **98,2%**, *F1-score* **96,9%**, tingkat *false positive* 1,4%, serta *detection latency* rata-rata **0,54 detik** (sub-detik), sekaligus menjaga konsumsi CPU Edge PC di bawah 18% dan penggunaan RAM stabil pada 2,8 GB. Temuan ini membuktikan viabilitas dan efisiensi paradigma *Edge Computing* sebagai lapisan pertahanan proaktif yang mandiri bagi ekosistem IoT skala lokal.
+Adopsi *Internet of Things* (IoT) telah tumbuh menjadi tulang punggung digitalisasi pada domain pemantauan lingkungan, otomasi industri, hingga permukiman cerdas, namun pertumbuhan tersebut tidak diimbangi penguatan keamanan pada sisi perangkat [1], [2]. Pada lapisan paling dasar ekosistem tersebut, mikrokontroler kelas *System-on-Chip* seperti Espressif ESP32 yang menjadi tulang punggung node sensor justru memiliki keterbatasan memori (SRAM ratusan kilobyte) dan kapasitas komputasi yang tidak memungkinkan dijalankannya *host-based firewall*, enkripsi tingkat lanjut, maupun *agent* keamanan konvensional [1], [3]. Kondisi ini menjadikan node IoT sebagai titik rawan yang dapat dieksploitasi melalui vektor spesifik seperti *Port Scanning*, *SYN Flooding*, *ICMP Flooding*, dan penyalahgunaan laju pesan protokol *Message Queuing Telemetry Transport* (*MQTT Rate Abuse*) [2]. Pendekatan keamanan yang masih bergantung pada komputasi *cloud* terpusat memperburuk situasi karena menambah latensi deteksi, membebani *bandwidth* hulu, serta menimbulkan risiko privasi terhadap data telemetri internal [3], [5]. Sebagai jawaban atas permasalahan tersebut, penelitian ini mengusulkan dan mengimplementasikan **Platform Unified Network Guard (UNG)**, sebuah platform pemantauan dan pertahanan keamanan jaringan IoT berbasis *Edge Computing* yang menempatkan seluruh simpul deteksi pada komputer lokal di dalam jaringan yang dipertahankan [4], [5]. UNG menerapkan strategi deteksi *hybrid* tiga lapis yang saling melengkapi: (1) *Signature-Based Intrusion Detection System* menggunakan *engine* Suricata [8] dengan 14 aturan tanda tangan kustom (SID 1000001–1000041) yang menjangkau serangan *reconnaissance*, *flooding*, penyalahgunaan MQTT, hingga *brute-force*; (2) *Rule-Based Threshold Engine* berbasis antrean geser (*sliding window* `collections.deque`) dengan lima aturan kuantitatif—`PORT_SCAN`, `SYN_FLOOD` (berbasis penanda paket SYN asli, `is_syn`), `ICMP_FLOOD`, `TRAFFIC_SPIKE`, dan `MQTT_RATE_ABUSE`; serta (3) *Machine Learning Anomaly Detection* tanpa pengawasan menggunakan algoritma *Isolation Forest* [6] (200 pohon, *contamination* 0,05) yang diperkaya model klasifikasi terbimbing *Random Forest* (150 pohon, 6 kelas serangan) terhadap 12 fitur agregasi trafik per IP sumber dalam jendela waktu 10 detik. Platform divalidasi pada *testbed* laboratorium nyata yang terdiri atas 5 node ESP32 [7] (192.168.20.101–105), segmen router IoT terisolasi (192.168.20.0/24), dan sub-jaringan pengujian penyerang (192.168.10.0/24), dengan seluruh beban kerja—penangkapan paket berbasis Scapy [10] dengan filter Berkeley Packet Filter (BPF), inferensi ML, broker Mosquitto [9], basis data PostgreSQL, layanan REST/WebSocket FastAPI, dan visualisasi *dashboard* Next.js 16 + React 19—dieksekusi secara lokal pada Edge PC berspesifikasi AMD Ryzen 5 5500GT (RAM 8 GB). Hasil evaluasi empiris menunjukkan bahwa sistem *hybrid* UNG mampu mendeteksi serangan siber dan deviasi trafik dengan akurasi **98,2%**, *F1-score* **96,9%**, tingkat *false positive* 1,4%, serta *detection latency* rata-rata **0,54 detik** (sub-detik), sekaligus menjaga konsumsi CPU Edge PC di bawah 18% dan penggunaan RAM stabil pada 2,8 GB. Temuan ini membuktikan viabilitas dan efisiensi paradigma *Edge Computing* sebagai lapisan pertahanan proaktif yang mandiri bagi ekosistem IoT skala lokal.
 
 **Kata Kunci:** *IoT Security*, *Edge Computing*, *Intrusion Detection System*, *Isolation Forest*, *Suricata*, *MQTT*, *Network Anomaly Detection*, *Next.js Dashboard*.
 
@@ -16,7 +16,7 @@ Adopsi *Internet of Things* (IoT) telah tumbuh menjadi tulang punggung digitalis
 
 ## Abstract
 
-*The widespread adoption of the Internet of Things (IoT) has become a backbone of digitalization across environmental monitoring, industrial automation, and smart-living domains, yet this rapid growth has not been matched by an equivalent strengthening of device-level security. At the most fundamental layer of this ecosystem, low-cost System-on-Chip microcontrollers such as the Espressif ESP32—central to most sensor nodes—exhibit severe memory (a few hundred kilobytes of SRAM) and compute constraints that preclude host-based firewalls, advanced encryption, or conventional security agents. These limitations render IoT nodes prime targets for specific attack vectors including port scanning, TCP SYN flooding, ICMP ping flooding, and Message Queuing Telemetry Transport (MQTT) message rate abuse. Conventional security approaches that still rely on centralized cloud computing further aggravate the situation by increasing detection latency, consuming upstream bandwidth, and exposing internal telemetry to privacy risks. To address these challenges, this study proposes and implements Unified Network Guard (UNG), an edge-computing-based IoT network monitoring and security platform that places every detection component on a local computer within the defended network. UNG employs a complementary three-tier hybrid detection strategy: (1) signature-based detection via the Suricata IDS with 14 custom signatures (SID 1000001–1000041) spanning reconnaissance, flooding, MQTT abuse, and brute-force attacks; (2) a deterministic rule-based sliding-window threshold engine (`collections.deque`) with five quantitative rules—PORT_SCAN, SYN_FLOOD (driven by a native SYN-packet marker, `is_syn`), ICMP_FLOOD, TRAFFIC_SPIKE, and MQTT_RATE_ABUSE; and (3) unsupervised machine-learning anomaly detection using Isolation Forest (200 trees, contamination 0.05), enriched by a supervised Random Forest classifier (150 trees, 6 attack classes) operating on 12 traffic-aggregation features per source IP within a 10-second window. The platform was validated on a physical laboratory testbed comprising 5 ESP32 nodes (192.168.10.101–105), an isolated IoT operational subnet (192.168.10.0/24), and an attacker network segment (192.168.20.0/24), with the entire workload—Scapy-based packet capture with a Berkeley Packet Filter (BPF), ML inference, the Mosquitto broker, PostgreSQL, FastAPI REST/WebSocket services, and a Next.js 16 + React 19 dashboard—executed locally on an edge node powered by an AMD Ryzen 5 5500GT processor (8 GB RAM). Empirical evaluation confirms that the UNG hybrid system detects cyber-attacks and traffic deviations with an accuracy of 98.2%, an F1-score of 96.9%, a false-positive rate of 1.4%, and an average detection latency of 0.54 seconds (sub-second), while keeping edge-PC CPU utilization below 18% and RAM usage stable at 2.8 GB. These findings demonstrate the viability and efficiency of the edge-computing paradigm as an autonomous, proactive defense layer for local-scale IoT ecosystems.*
+*The widespread adoption of the Internet of Things (IoT) has become a backbone of digitalization across environmental monitoring, industrial automation, and smart-living domains, yet this rapid growth has not been matched by an equivalent strengthening of device-level security. At the most fundamental layer of this ecosystem, low-cost System-on-Chip microcontrollers such as the Espressif ESP32—central to most sensor nodes—exhibit severe memory (a few hundred kilobytes of SRAM) and compute constraints that preclude host-based firewalls, advanced encryption, or conventional security agents. These limitations render IoT nodes prime targets for specific attack vectors including port scanning, TCP SYN flooding, ICMP ping flooding, and Message Queuing Telemetry Transport (MQTT) message rate abuse. Conventional security approaches that still rely on centralized cloud computing further aggravate the situation by increasing detection latency, consuming upstream bandwidth, and exposing internal telemetry to privacy risks. To address these challenges, this study proposes and implements Unified Network Guard (UNG), an edge-computing-based IoT network monitoring and security platform that places every detection component on a local computer within the defended network. UNG employs a complementary three-tier hybrid detection strategy: (1) signature-based detection via the Suricata IDS with 14 custom signatures (SID 1000001–1000041) spanning reconnaissance, flooding, MQTT abuse, and brute-force attacks; (2) a deterministic rule-based sliding-window threshold engine (`collections.deque`) with five quantitative rules—PORT_SCAN, SYN_FLOOD (driven by a native SYN-packet marker, `is_syn`), ICMP_FLOOD, TRAFFIC_SPIKE, and MQTT_RATE_ABUSE; and (3) unsupervised machine-learning anomaly detection using Isolation Forest (200 trees, contamination 0.05), enriched by a supervised Random Forest classifier (150 trees, 6 attack classes) operating on 12 traffic-aggregation features per source IP within a 10-second window. The platform was validated on a physical laboratory testbed comprising 5 ESP32 nodes (192.168.20.101–105), an isolated IoT operational subnet (192.168.20.0/24), and an attacker network segment (192.168.10.0/24), with the entire workload—Scapy-based packet capture with a Berkeley Packet Filter (BPF), ML inference, the Mosquitto broker, PostgreSQL, FastAPI REST/WebSocket services, and a Next.js 16 + React 19 dashboard—executed locally on an edge node powered by an AMD Ryzen 5 5500GT processor (8 GB RAM). Empirical evaluation confirms that the UNG hybrid system detects cyber-attacks and traffic deviations with an accuracy of 98.2%, an F1-score of 96.9%, a false-positive rate of 1.4%, and an average detection latency of 0.54 seconds (sub-second), while keeping edge-PC CPU utilization below 18% and RAM usage stable at 2.8 GB. These findings demonstrate the viability and efficiency of the edge-computing paradigm as an autonomous, proactive defense layer for local-scale IoT ecosystems.*
 
 **Keywords:** *IoT Security, Edge Computing, Intrusion Detection System, Isolation Forest, Suricata, MQTT, Anomaly Detection, Real-time Dashboard.*
 
@@ -95,20 +95,20 @@ Sistem dibangun menggunakan topologi dua router terpisah guna mengisolasi lingku
              ┌─────────────┴─────────────┐
              │                           │
     ┌─────────────────┐         ┌─────────────────┐
-    │ TP-Link WR840N  │         │ TP-Link WR820N  │
+    │ TP-Link TL-WR820N  │         │ TP-Link TL-WR840N  │
     │ (IoT Subnet)    │         │ (Attacker Subnet│
-    │ 192.168.10.1/24 │         │ 192.168.20.1/24 │
+    │ 192.168.20.1/24 │         │ 192.168.10.1/24 │
     └────────┬────────┘         └────────┬────────┘
              │                           │
     ┌────────┼────────┐                  │
     │   │    │   │    │             Test PC
-  ESP01 02  03  04  05             192.168.20.100
+  ESP01 02  03  04  05             192.168.10.100
   (.101-.105)                      (Lab Attacker)
     │   │    │   │    │
     └────────┼────────┘
              │
        Edge PC (Ryzen 5)
-       192.168.10.10
+       192.168.20.100
        [Collector + Engine + DB + Dashboard]
 ```
 
@@ -116,15 +116,15 @@ Sistem dibangun menggunakan topologi dua router terpisah guna mengisolasi lingku
 
 | Entitas Jaringan | Alamat IP | Subnet Mask | Peran Fungsional |
 |---|---|---|---|
-| Gateway IoT (WR840N) | `192.168.10.1` | `255.255.255.0` | Akses Point & DHCP Server IoT |
-| Edge Security PC | `192.168.10.10` | `255.255.255.0` | Sniffer, IDS, DB, API, Visualisasi |
-| ESP32 Node 01 | `192.168.10.101` | `255.255.255.0` | Node Telemetri Iklim (Suhu & Kelembapan) |
-| ESP32 Node 02 | `192.168.10.102` | `255.255.255.0` | Node Keamanan (Motion PIR & Cahaya) |
-| ESP32 Node 03 | `192.168.10.103` | `255.255.255.0` | Node Energi (Tegangan & Daya Listrik) |
-| ESP32 Node 04 | `192.168.10.104` | `255.255.255.0` | Node Kualitas Udara (CO2 & PM2.5) |
-| ESP32 Node 05 | `192.168.10.105` | `255.255.255.0` | Node Aktuator & Smart Gateway |
-| Router Attacker (WR820N) | `192.168.20.1` | `255.255.255.0` | Gateway Subnet Pengujian |
-| PC Uji Penyerang | `192.168.20.100` | `255.255.255.0` | Generator Vektor Serangan Lab |
+| Gateway IoT (TL-WR820N) | `192.168.20.1` | `255.255.255.0` | Akses Point & DHCP Server IoT |
+| Edge Security PC | `192.168.20.100` | `255.255.255.0` | Sniffer, IDS, DB, API, Visualisasi |
+| ESP32 Node 01 | `192.168.20.101` | `255.255.255.0` | Node Telemetri Iklim (Suhu & Kelembapan) |
+| ESP32 Node 02 | `192.168.20.102` | `255.255.255.0` | Node Keamanan (Motion PIR & Cahaya) |
+| ESP32 Node 03 | `192.168.20.103` | `255.255.255.0` | Node Energi (Tegangan & Daya Listrik) |
+| ESP32 Node 04 | `192.168.20.104` | `255.255.255.0` | Node Kualitas Udara (CO2 & PM2.5) |
+| ESP32 Node 05 | `192.168.20.105` | `255.255.255.0` | Node Aktuator & Smart Gateway |
+| Router Attacker (TL-WR840N) | `192.168.10.1` | `255.255.255.0` | Gateway Subnet Pengujian |
+| PC Uji Penyerang | `192.168.10.100` | `255.255.255.0` | Generator Vektor Serangan Lab |
 
 ---
 
@@ -150,7 +150,7 @@ Alur pemrosesan data pada sistem UNG terbagi menjadi empat tahapan berurutan:
                                                                                       [Next.js Dashboard]
 ```
 
-1. **Ingestasi & Sniffing:** Modul *traffic sniffer* berbasis Scapy menangkap setiap paket pada antarmuka jaringan fisik dengan filter Berkeley Packet Filter (BPF) `net 192.168.10.0/24`. Data dibuffer dan dimasukkan secara *batch* (50 rekaman per transaksi atau interval 5 detik) ke PostgreSQL.
+1. **Ingestasi & Sniffing:** Modul *traffic sniffer* berbasis Scapy menangkap setiap paket pada antarmuka jaringan fisik dengan filter Berkeley Packet Filter (BPF) `net 192.168.20.0/24`. Data dibuffer dan dimasukkan secara *batch* (50 rekaman per transaksi atau interval 5 detik) ke PostgreSQL.
 2. **Inspeksi Deteksi:** 
    - Suricata membaca paket secara independen dan mencocokkan pola tanda tangan.
    - *Rule Engine* mengevaluasi jendela geser (*sliding window*) untuk mendeteksi *threshold violations*.
@@ -211,7 +211,7 @@ Mesin aturan mengimplementasikan struktur data antrean dua ujung (*double-ended 
 Sebanyak 14 aturan tanda tangan (*rules*) dikompilasikan pada berkas `suricata/rules/local.rules` dengan rentang SID 1000001 hingga 1000041. Contoh representasi aturan untuk mendeteksi *TCP Port Scanning* dari jaringan penyerang:
 
 ```suricata
-alert tcp 192.168.20.0/24 any -> 192.168.10.0/24 any (
+alert tcp 192.168.10.0/24 any -> 192.168.20.0/24 any (
     msg:"UNG-ALERT: TCP Port Scan from Attacker Subnet";
     flags:S; 
     threshold:type threshold, track by_src, count 10, seconds 3;
@@ -235,8 +235,8 @@ Pengujian fungsional dan performa deteksi dilakukan dengan mengeksekusi empat sk
 
 1. **Skenario 1 (S1) - Operasi Normal:** Seluruh node ESP32 mentransmisikan data telemetri secara berkala tanpa gangguan eksternal selama 30 menit.
 2. **Skenario 2 (S2) - Anomali Lonjakan Trafik (*Traffic Spike*):** Injeksi permintaan volumetrik menggunakan utilitas *Apache Benchmark* (`ab -n 10000 -c 50`) menuju endpoint lokal.
-3. **Skenario 3 (S3) - Pemindaian Port (*Port Scanning*):** Penyerang menjalankan utilitas `nmap -sS -T4 -p 1-1000 192.168.10.101` dari IP `192.168.20.100`.
-4. **Skenario 4 (S4) - Serangan Banjir Paket (*Flooding Stress Test*):** Penyerang mengeksekusi `hping3 --flood -S -p 1883 192.168.10.10` dan `hping3 --flood --icmp 192.168.10.101`.
+3. **Skenario 3 (S3) - Pemindaian Port (*Port Scanning*):** Penyerang menjalankan utilitas `nmap -sS -T4 -p 1-1000 192.168.20.101` dari IP `192.168.10.100`.
+4. **Skenario 4 (S4) - Serangan Banjir Paket (*Flooding Stress Test*):** Penyerang mengeksekusi `hping3 --flood -S -p 1883 192.168.20.100` dan `hping3 --flood --icmp 192.168.20.101`.
 
 ### 5.2 Metrik Evaluasi Kuantitatif
 Evaluasi efektivitas deteksi dihitung menggunakan matriks kebingungan (*Confusion Matrix*) standar:

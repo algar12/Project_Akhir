@@ -187,5 +187,4 @@ Akses cepat:
 - **Simulasi ESP32**: perangkat nyata atau simulator — jelaskan mana yang dipakai.
 - **Serangan**: simulasi terkontrol, dijalankan hanya saat sesi demo, dari mesin penyerang terpisah.
 - **Timezone**: seluruh pipeline UTC; dashboard menampilkan waktu tersebut.
-- **Suricata rule** menarget subnet lab `192.168.10.0/24` (desain artikel);
-  pada jaringan live `192.168.20.0/24` hanya rule yang relevan topologi yang fire.
+- **Suricata rule** menarget subnet IoT `192.168.20.0/24` (TL-WR820N, 192.168.20.1) yang dipantau; segmen pengujian attacker berada di subnet terpisah `192.168.10.0/24` (TL-WR840N, mesin penyerang 192.168.10.100).

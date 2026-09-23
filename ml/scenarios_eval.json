@@ -9,21 +9,21 @@
     "start": "2026-09-21T23:53:48",
     "end": "2026-09-21T23:54:38",
     "label": "port_scan",
-    "source_ip": "192.168.41.250",
+    "source_ip": "192.168.10.100",
     "_note": "Serangan terdeteksi: prediksi @ 2026-09-21 23:54:08.710986"
   },
   {
     "start": "2026-09-21T23:53:58",
     "end": "2026-09-21T23:54:48",
     "label": "syn_flood",
-    "source_ip": "192.168.41.250",
+    "source_ip": "192.168.10.100",
     "_note": "Serangan terdeteksi: prediksi @ 2026-09-21 23:54:18.784848"
   },
   {
     "start": "2026-09-21T23:54:08",
     "end": "2026-09-21T23:54:58",
     "label": "icmp_flood",
-    "source_ip": "192.168.41.250",
+    "source_ip": "192.168.10.100",
     "_note": "Serangan terdeteksi: prediksi @ 2026-09-21 23:54:28.896031"
   },
   {

@@ -3,28 +3,30 @@
 # Suricata IDS Signature Rules
 # ==============================================================================
 # Format: action proto src_ip src_port direction dst_ip dst_port (options)
-# Subnet IoT : 192.168.10.0/24
-# Attacker   : 192.168.20.0/24 (segmen pengujian via TL-WR820N)
+# Subnet IoT   : 192.168.20.0/24 (downstream, TL-WR820N 192.168.20.1)
+#                Edge PC : 192.168.20.100, ESP32 : 192.168.20.101–105
+# Attacker     : 192.168.10.0/24 (upstream, TL-WR840N 192.168.10.1)
+#                Mesin attacker : 192.168.10.100
 # ==============================================================================
 
 # ─── Kelompok 1: Reconnaissance / Port Scanning ──────────────────────────────
 
 # 1.1 TCP Port Scan (banyak SYN ke berbagai port dari satu source)
-alert tcp any any -> 192.168.10.0/24 any \
+alert tcp any any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: Possible TCP Port Scan to IoT Network"; \
      flags:S; \
      threshold:type threshold, track by_src, count 20, seconds 5; \
      classtype:attempted-recon; sid:1000001; rev:2;)
 
 # 1.2 TCP Port Scan dari subnet attacker khusus
-alert tcp 192.168.20.0/24 any -> 192.168.10.0/24 any \
+alert tcp 192.168.10.0/24 any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: TCP Port Scan from Attacker Subnet"; \
      flags:S; \
      threshold:type threshold, track by_src, count 10, seconds 3; \
      classtype:attempted-recon; sid:1000002; rev:2;)
 
 # 1.3 UDP Port Scan
-alert udp any any -> 192.168.10.0/24 any \
+alert udp any any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: UDP Port Scan to IoT Network"; \
      threshold:type threshold, track by_src, count 30, seconds 5; \
      classtype:attempted-recon; sid:1000003; rev:1;)
@@ -32,21 +34,21 @@ alert udp any any -> 192.168.10.0/24 any \
 # ─── Kelompok 2: Denial of Service (DoS / Flood) ─────────────────────────────
 
 # 2.1 ICMP Ping Flood menuju subnet IoT
-alert icmp any any -> 192.168.10.0/24 any \
+alert icmp any any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: ICMP Ping Flood Detected"; \
      itype:8; \
      threshold:type threshold, track by_src, count 50, seconds 3; \
      classtype:denial-of-service; sid:1000010; rev:2;)
 
 # 2.2 TCP SYN Flood ke satu target IoT node
-alert tcp any any -> 192.168.10.0/24 any \
+alert tcp any any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: High SYN Flood Rate against IoT Node"; \
      flags:S; \
      threshold:type threshold, track by_dst, count 100, seconds 2; \
      classtype:denial-of-service; sid:1000011; rev:2;)
 
 # 2.3 UDP Flood
-alert udp any any -> 192.168.10.0/24 any \
+alert udp any any -> 192.168.20.0/24 any \
     (msg:"UNG-ALERT: UDP Flood to IoT Network"; \
      threshold:type threshold, track by_dst, count 200, seconds 2; \
      classtype:denial-of-service; sid:1000012; rev:1;)
@@ -54,20 +56,20 @@ alert udp any any -> 192.168.10.0/24 any \
 # ─── Kelompok 3: MQTT / IoT Protocol Anomaly ─────────────────────────────────
 
 # 3.1 Koneksi MQTT dari subnet attacker (unauthorized client)
-alert tcp 192.168.20.0/24 any -> any 1883 \
+alert tcp 192.168.10.0/24 any -> any 1883 \
     (msg:"UNG-ALERT: Unauthorized MQTT Connection from Attacker Subnet"; \
      flow:to_server,established; \
      classtype:policy-violation; sid:1000020; rev:2;)
 
 # 3.2 Koneksi MQTT dari sembarang IP di luar subnet IoT dan lokal
-alert tcp ![192.168.10.0/24,192.168.1.0/24] any -> any 1883 \
+alert tcp ![192.168.20.0/24,192.168.1.0/24] any -> any 1883 \
     (msg:"UNG-ALERT: MQTT Connection from Unknown External IP"; \
      flow:to_server,established; \
      threshold:type threshold, track by_src, count 3, seconds 10; \
      classtype:policy-violation; sid:1000021; rev:1;)
 
 # 3.3 MQTT over WebSocket (port 9001) dari luar subnet IoT
-alert tcp !192.168.10.0/24 any -> any 9001 \
+alert tcp !192.168.20.0/24 any -> any 9001 \
     (msg:"UNG-ALERT: MQTT WebSocket from Non-IoT Subnet"; \
      flow:to_server,established; \
      classtype:policy-violation; sid:1000022; rev:1;)
@@ -82,14 +84,14 @@ alert tcp any any -> any 1883 \
 # ─── Kelompok 4: Brute Force / Auth Attempt ──────────────────────────────────
 
 # 4.1 SSH Brute Force ke Edge PC (port 22)
-alert tcp any any -> 192.168.10.10/32 22 \
+alert tcp any any -> 192.168.20.100/32 22 \
     (msg:"UNG-ALERT: SSH Brute Force Attempt to Edge PC"; \
      flow:to_server,established; \
      threshold:type threshold, track by_src, count 5, seconds 30; \
      classtype:attempted-admin; sid:1000030; rev:1;)
 
 # 4.2 HTTP Auth Brute Force ke dashboard (port 3000 Grafana / 8080 API)
-alert tcp any any -> 192.168.10.10/32 3000 \
+alert tcp any any -> 192.168.20.100/32 3000 \
     (msg:"UNG-ALERT: HTTP Brute Force to Dashboard Port 3000"; \
      flow:to_server,established; \
      threshold:type threshold, track by_src, count 20, seconds 10; \
@@ -98,14 +100,14 @@ alert tcp any any -> 192.168.10.10/32 3000 \
 # ─── Kelompok 5: Anomaly Traffic General ─────────────────────────────────────
 
 # 5.1 ESP32 node mengirim ke port tidak lazim (bukan MQTT/HTTP)
-alert tcp 192.168.10.0/24 any -> any !1883 \
+alert tcp 192.168.20.0/24 any -> any !1883 \
     (msg:"UNG-ALERT: IoT Node Connecting to Unusual Port"; \
      flow:to_server,established; \
      threshold:type threshold, track by_src, count 10, seconds 60; \
      classtype:policy-violation; sid:1000040; rev:1;)
 
 # 5.2 Traffic keluar dari IoT subnet ke internet (suspicious exfiltration)
-alert ip 192.168.10.0/24 any -> !192.168.0.0/16 any \
+alert ip 192.168.20.0/24 any -> !192.168.0.0/16 any \
     (msg:"UNG-ALERT: IoT Device Connecting Outside Local Network"; \
      threshold:type threshold, track by_src, count 5, seconds 30; \
      classtype:policy-violation; sid:1000041; rev:1;)

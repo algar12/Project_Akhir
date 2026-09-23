@@ -193,11 +193,11 @@ export default function LiveTopologyMap() {
       // Read latest devices directly from ref
       const currentDevices = devicesRef.current;
       const rawDevices = currentDevices.length > 0 ? currentDevices : [
-        { id: 1, device_name: 'ESP32-01', ip_address: '192.168.10.101', device_type: 'Climate (Temp/Hum)', status: 'registered', last_seen: '' },
-        { id: 2, device_name: 'ESP32-02', ip_address: '192.168.10.102', device_type: 'Security (Motion/Light)', status: 'registered', last_seen: '' },
-        { id: 3, device_name: 'ESP32-03', ip_address: '192.168.10.103', device_type: 'Energy (Power/Volt)', status: 'registered', last_seen: '' },
-        { id: 4, device_name: 'ESP32-04', ip_address: '192.168.10.104', device_type: 'Air Quality (CO2)', status: 'registered', last_seen: '' },
-        { id: 5, device_name: 'ESP32-05', ip_address: '192.168.10.105', device_type: 'Smart Actuator', status: 'registered', last_seen: '' },
+        { id: 1, device_name: 'ESP32-01', ip_address: '192.168.20.101', device_type: 'Climate (Temp/Hum)', status: 'registered', last_seen: '' },
+        { id: 2, device_name: 'ESP32-02', ip_address: '192.168.20.102', device_type: 'Security (Motion/Light)', status: 'registered', last_seen: '' },
+        { id: 3, device_name: 'ESP32-03', ip_address: '192.168.20.103', device_type: 'Energy (Power/Volt)', status: 'registered', last_seen: '' },
+        { id: 4, device_name: 'ESP32-04', ip_address: '192.168.20.104', device_type: 'Air Quality (CO2)', status: 'registered', last_seen: '' },
+        { id: 5, device_name: 'ESP32-05', ip_address: '192.168.20.105', device_type: 'Heartbeat / Gateway', status: 'registered', last_seen: '' },
       ];
 
       // Central Gateway Router — IP dinamis dari jaringan yang tersambung

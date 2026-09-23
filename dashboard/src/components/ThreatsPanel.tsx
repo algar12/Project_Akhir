@@ -128,7 +128,7 @@ export default function ThreatsPanel() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-white">
             <span className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee]"></span>
-            <span>3 ESP32 Nodes</span>
+            <span>5 ESP32 Nodes</span>
           </div>
           <div className="flex items-center gap-1.5 text-white">
             <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]"></span>

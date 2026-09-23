@@ -82,7 +82,7 @@ RF_CLASSES: list[str] = [
 PREDICTOR_POLL_INTERVAL: int = int(os.getenv('PREDICTOR_POLL_INTERVAL', '10'))
 
 # Subnet IoT aktual — dipakai sebagai target_ip default pada alert ML
-IOT_SUBNET: str = os.getenv('IOT_SUBNET', '192.168.10.0/24')
+IOT_SUBNET: str = os.getenv('IOT_SUBNET', '192.168.20.0/24')
 
 # Skor anomali Isolation Forest di bawah threshold ini dianggap anomali.
 # Default None → pakai threshold hasil kalibrasi saat training (if_calibration.json),

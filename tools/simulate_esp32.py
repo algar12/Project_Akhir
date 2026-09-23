@@ -10,7 +10,7 @@ Cara menjalankan:
   # Simulasikan ESP32-01 (Sensor Suhu & Kelembapan):
   python tools/simulate_esp32.py --node 1
 
-  # Simulasikan semua node (ESP32-01 s.d ESP32-03):
+  # Simulasikan semua node (ESP32-01 s.d ESP32-05):
   python tools/simulate_esp32.py --all
 
 Tekan Ctrl+C untuk mematikan node dan melihat status berubah menjadi OFFLINE di dashboard.
@@ -41,38 +41,38 @@ except ImportError:
 NODES = {
     1: {
         "device_id": "ESP32-01",
-        "ip": "192.168.10.101",
+        "ip": "192.168.20.101",
         "topic": "iot/esp32-01/telemetry",
         "type": "climate",
         "name": "Climate Sensor (Temp/Humidity)"
     },
     2: {
         "device_id": "ESP32-02",
-        "ip": "192.168.10.102",
+        "ip": "192.168.20.102",
         "topic": "iot/esp32-02/telemetry",
         "type": "security",
         "name": "Security Sensor (Motion/Light)"
     },
     3: {
         "device_id": "ESP32-03",
-        "ip": "192.168.10.103",
+        "ip": "192.168.20.103",
         "topic": "iot/esp32-03/telemetry",
         "type": "energy",
         "name": "Energy Meter (Power/Voltage)"
     },
     4: {
         "device_id": "ESP32-04",
-        "ip": "192.168.10.104",
+        "ip": "192.168.20.104",
         "topic": "iot/esp32-04/telemetry",
         "type": "air_quality",
         "name": "Air Quality (CO2/PM2.5)"
     },
     5: {
         "device_id": "ESP32-05",
-        "ip": "192.168.10.105",
+        "ip": "192.168.20.105",
         "topic": "iot/esp32-05/telemetry",
-        "type": "actuator",
-        "name": "Smart Actuator & Gateway"
+        "type": "heartbeat",
+        "name": "Heartbeat / Gateway Node"
     }
 }
 
@@ -87,13 +87,13 @@ logger = logging.getLogger('ESP32Sim')
 def main():
     parser = argparse.ArgumentParser(description="Simulasi Perangkat IoT ESP32 untuk UNG")
     parser.add_argument("--node", type=int, choices=[1, 2, 3, 4, 5], help="Nomor node ESP32 (1-5)")
-    parser.add_argument("--all", action="store_true", help="Jalankan semua node 1 s/d 3")
+    parser.add_argument("--all", action="store_true", help="Jalankan semua node 1 s/d 5")
     parser.add_argument("--interval", type=float, default=3.0, help="Interval kirim pesan (detik)")
     args = parser.parse_args()
 
     selected_nodes = []
     if args.all:
-        selected_nodes = [NODES[1], NODES[2], NODES[3]]
+        selected_nodes = [NODES[1], NODES[2], NODES[3], NODES[4], NODES[5]]
     elif args.node:
         selected_nodes = [NODES[args.node]]
     else:
@@ -191,6 +191,12 @@ def main():
                 elif n["type"] == "energy":
                     payload["voltage"] = round(220.0 + random.uniform(-2, 2), 1)
                     payload["current_a"] = round(random.uniform(0.5, 2.5), 2)
+                elif n["type"] == "air_quality":
+                    payload["co2_ppm"] = random.randint(400, 1200)
+                    payload["pm25"] = round(random.uniform(5.0, 75.0), 1)
+                elif n["type"] == "heartbeat":
+                    payload["rssi"] = random.randint(-75, -45)
+                    payload["free_heap"] = random.randint(120000, 180000)
 
                 json_str = json.dumps(payload)
                 client.publish(n["topic"], json_str, qos=1)

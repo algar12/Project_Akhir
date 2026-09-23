@@ -65,7 +65,7 @@ Seluruh pemrosesan dilakukan di edge (PC lokal), bukan di cloud, sehingga latens
 ```
 ESP32 menghasilkan aktivitas IoT
         ↓
-Router membentuk jaringan IoT (192.168.10.0/24)
+Router membentuk jaringan IoT (192.168.20.0/24)
         ↓
 Edge PC mengumpulkan dan menganalisis traffic
         ↓
@@ -149,14 +149,14 @@ Sistem akhir diharapkan mampu:
 
 | Perangkat | Jumlah | Fungsi | IP Address |
 |---|:---:|---|---|
-| PC Ryzen 5 5500GT (RAM 8 GB) | 1 | Edge Computing Server | `192.168.10.10` |
-| TP-Link TL-WR840N V6 | 1 | Router jaringan IoT | `192.168.10.1` (LAN) |
-| TP-Link TL-WR820N | 1 | Router jaringan pengujian/attacker | `192.168.20.1` |
-| ESP32 #1 (Node01) | 1 | Climate Sensor (Temp/Humidity) | `192.168.10.101` |
-| ESP32 #2 (Node02) | 1 | Security Sensor (Motion/Light) | `192.168.10.102` |
-| ESP32 #3 (Node03) | 1 | Energy Meter (Power/Voltage) | `192.168.10.103` |
-| ESP32 #4 (Node04) | 1 | Air Quality (CO2/PM2.5) | `192.168.10.104` |
-| ESP32 #5 (Node05) | 1 | Smart Actuator & Gateway | `192.168.10.105` |
+| PC Ryzen 5 5500GT (RAM 8 GB) | 1 | Edge Computing Server | `192.168.20.100` |
+| TP-Link TL-WR820N | 1 | Router jaringan IoT | `192.168.20.1` (LAN) |
+| TP-Link TL-WR840N | 1 | Router jaringan pengujian/attacker | `192.168.10.1` |
+| ESP32 #1 (Node01) | 1 | Climate Sensor (Temp/Humidity) | `192.168.20.101` |
+| ESP32 #2 (Node02) | 1 | Security Sensor (Motion/Light) | `192.168.20.102` |
+| ESP32 #3 (Node03) | 1 | Energy Meter (Power/Voltage) | `192.168.20.103` |
+| ESP32 #4 (Node04) | 1 | Air Quality (CO2/PM2.5) | `192.168.20.104` |
+| ESP32 #5 (Node05) | 1 | Smart Actuator & Gateway | `192.168.20.105` |
 
 ### 4.2 Perangkat Tambahan
 
@@ -165,14 +165,14 @@ Sistem akhir diharapkan mampu:
 - Breadboard, LED, Resistor (opsional untuk demo)
 - Power supply untuk ESP32
 
-### 4.3 Spesifikasi Router TL-WR840N V6
+### 4.3 Spesifikasi Router TL-WR820N
 
 | Parameter | Nilai |
 |---|---|
-| Model | TP-Link TL-WR840N V6 |
+| Model | TP-Link TL-WR820N |
 | Firmware | 0.9.1 4.17 |
 | Operation Mode | WISP / Wireless Router |
-| LAN IP | 192.168.10.1 |
+| LAN IP | 192.168.20.1 |
 | LAN Subnet | 255.255.255.0 (/24) |
 | Wi-Fi SSID | TP-Link_D38E |
 | Band | 2.4 GHz, Channel 6 |
@@ -192,41 +192,41 @@ Sistem akhir diharapkan mampu:
               ┌─────────┴─────────┐
               │                   │
     ┌─────────────────┐   ┌──────────────┐
-    │  TL-WR840N      │   │  TL-WR820N   │
+    │  TL-WR820N      │   │  TL-WR840N   │
     │  IoT Network    │   │  Attack Lab  │
-    │  192.168.10.0/24│   │  192.168.20.0/24│
+    │  192.168.20.0/24│   │  192.168.10.0/24│
     └────────┬────────┘   └───────┬──────┘
              │                    │
     ┌────────┼────────┐           │
     │   │    │   │    │      Test PC
-  ESP01 02  03  04  05     192.168.20.100
+  ESP01 02  03  04  05     192.168.10.100
     │   │    │   │    │    (Lab Attacker)
     └────────┼────────┘
              │
         Edge PC (Ryzen 5)
-        192.168.10.10
+        192.168.20.100
 ```
 
 ### 5.2 Tabel IP Address
 
-**Jaringan IoT (192.168.10.0/24):**
+**Jaringan IoT (192.168.20.0/24):**
 
 | Device | IP Address | Fungsi |
 |---|---|---|
-| TL-WR840N LAN Gateway | `192.168.10.1` | Router / Access Point |
-| Edge PC (Ryzen 5) | `192.168.10.10` | Edge Security Node |
-| ESP32-01 | `192.168.10.101` | Climate Sensor |
-| ESP32-02 | `192.168.10.102` | Security Sensor |
-| ESP32-03 | `192.168.10.103` | Energy Meter |
-| ESP32-04 | `192.168.10.104` | Air Quality Sensor |
-| ESP32-05 | `192.168.10.105` | Smart Actuator |
+| TL-WR820N LAN Gateway | `192.168.20.1` | Router / Access Point |
+| Edge PC (Ryzen 5) | `192.168.20.100` | Edge Security Node |
+| ESP32-01 | `192.168.20.101` | Climate Sensor |
+| ESP32-02 | `192.168.20.102` | Security Sensor |
+| ESP32-03 | `192.168.20.103` | Energy Meter |
+| ESP32-04 | `192.168.20.104` | Air Quality Sensor |
+| ESP32-05 | `192.168.20.105` | Smart Actuator |
 
-**Jaringan Pengujian (192.168.20.0/24):**
+**Jaringan Pengujian (192.168.10.0/24):**
 
 | Device | IP Address | Fungsi |
 |---|---|---|
-| TL-WR820N | `192.168.20.1` | Router Attacker |
-| Test PC | `192.168.20.100` | Lab Attacker / Pentest |
+| TL-WR840N | `192.168.10.1` | Router Attacker |
+| Test PC | `192.168.10.100` | Lab Attacker / Pentest |
 
 ### 5.3 Segmentasi Jaringan
 
@@ -558,11 +558,11 @@ Lima perangkat ESP32 didaftarkan saat inisialisasi database:
 
 ```sql
 INSERT INTO devices (device_name, ip_address, device_type, status) VALUES
-    ('ESP32-01', '192.168.10.101', 'Climate Sensor (Temp/Humidity)', 'registered'),
-    ('ESP32-02', '192.168.10.102', 'Security Sensor (Motion/Light)', 'registered'),
-    ('ESP32-03', '192.168.10.103', 'Energy Meter (Power/Voltage)', 'registered'),
-    ('ESP32-04', '192.168.10.104', 'Air Quality (CO2/PM2.5)', 'registered'),
-    ('ESP32-05', '192.168.10.105', 'Smart Actuator & Gateway', 'registered')
+    ('ESP32-01', '192.168.20.101', 'Climate Sensor (Temp/Humidity)', 'registered'),
+    ('ESP32-02', '192.168.20.102', 'Security Sensor (Motion/Light)', 'registered'),
+    ('ESP32-03', '192.168.20.103', 'Energy Meter (Power/Voltage)', 'registered'),
+    ('ESP32-04', '192.168.20.104', 'Air Quality (CO2/PM2.5)', 'registered'),
+    ('ESP32-05', '192.168.20.105', 'Smart Actuator & Gateway', 'registered')
 ON CONFLICT (ip_address) DO NOTHING;
 ```
 
@@ -584,8 +584,8 @@ ON CONFLICT (ip_address) DO NOTHING;
 
 Setiap node ESP32 menjalankan alur yang sama:
 
-1. **Setup Wi-Fi** — Koneksi ke SSID `TP-Link_D38E` pada subnet `192.168.10.0/24`
-2. **Koneksi MQTT** — Terhubung ke broker di `192.168.10.10:1883`
+1. **Setup Wi-Fi** — Koneksi ke SSID `TP-Link_D38E` pada subnet `192.168.20.0/24`
+2. **Koneksi MQTT** — Terhubung ke broker di `192.168.20.100:1883`
 3. **Simulasi Sensor** — Generate data sensor dengan random walk realistis
 4. **Publish** — Kirim payload JSON ke topic `iot/esp32-XX/telemetry` setiap 4 detik
 5. **Heartbeat** — LED built-in berkedip sebagai indikator status
@@ -609,7 +609,7 @@ Setiap node ESP32 menjalankan alur yang sama:
 ```cpp
 const char* ssid        = "TP-Link_D38E";
 const char* password    = "12345678";
-const char* mqtt_broker = "192.168.10.10";
+const char* mqtt_broker = "192.168.20.100";
 const int   mqtt_port   = 1883;
 const char* mqtt_topic  = "iot/esp32-01/telemetry";
 const unsigned long PUBLISH_INTERVAL_MS = 4000;
@@ -641,7 +641,7 @@ iot/
 ### 11.3 Alur Data MQTT
 
 ```
-ESP32 Node → Wi-Fi → Router (192.168.10.1) → Mosquitto Broker (192.168.10.10:1883)
+ESP32 Node → Wi-Fi → Router (192.168.20.1) → Mosquitto Broker (192.168.20.100:1883)
                                                         ↓
                                                MQTT Subscriber (collector)
                                                         ↓
@@ -681,7 +681,7 @@ Modul collector terdiri dari dua sub-komponen yang berjalan paralel:
 | Parameter | Default | Keterangan |
 |---|---|---|
 | `CAPTURE_INTERFACE` | `eth0` | Interface jaringan untuk sniffing |
-| `CAPTURE_BPF_FILTER` | `net 192.168.10.0/24` | BPF filter — hanya tangkap traffic subnet IoT |
+| `CAPTURE_BPF_FILTER` | `net 192.168.20.0/24` | BPF filter — hanya tangkap traffic subnet IoT |
 | `TRAFFIC_BATCH_SIZE` | 50 | Jumlah paket per batch insert |
 | `TRAFFIC_FLUSH_INTERVAL` | 5 detik | Interval flush berkala |
 
@@ -785,19 +785,19 @@ UNG menggunakan **14 custom Suricata rules** yang dibagi dalam 5 kelompok:
 
 ```
 # TCP Port Scan ke subnet IoT (≥20 SYN dalam 5 detik)
-alert tcp any any -> 192.168.10.0/24 any (
+alert tcp any any -> 192.168.20.0/24 any (
     msg:"UNG-ALERT: Possible TCP Port Scan to IoT Network";
     flags:S; threshold:type threshold, track by_src, count 20, seconds 5;
     classtype:attempted-recon; sid:1000001; rev:2;)
 
 # Port Scan khusus dari subnet attacker (≥10 dalam 3 detik)
-alert tcp 192.168.20.0/24 any -> 192.168.10.0/24 any (
+alert tcp 192.168.10.0/24 any -> 192.168.20.0/24 any (
     msg:"UNG-ALERT: TCP Port Scan from Attacker Subnet";
     flags:S; threshold:type threshold, track by_src, count 10, seconds 3;
     classtype:attempted-recon; sid:1000002; rev:2;)
 
 # UDP Port Scan
-alert udp any any -> 192.168.10.0/24 any (
+alert udp any any -> 192.168.20.0/24 any (
     msg:"UNG-ALERT: UDP Port Scan to IoT Network";
     threshold:type threshold, track by_src, count 30, seconds 5;
     classtype:attempted-recon; sid:1000003; rev:1;)
@@ -1091,7 +1091,7 @@ npm run build  # Production build
 
 ```
 ESP32 Node                  Mosquitto Broker              Collector
-(192.168.10.10x)            (192.168.10.10:1883)         (Python)
+(192.168.20.10x)            (192.168.20.100:1883)         (Python)
      │                              │                        │
      │── MQTT Publish ──────────────►│                        │
      │   topic: iot/esp32-XX/       │                        │
@@ -1113,7 +1113,7 @@ ESP32 Node                  Mosquitto Broker              Collector
 
 ```
 Attacker PC                 Suricata IDS              Rule Engine
-(192.168.20.100)           (interface sniff)         (Python thread)
+(192.168.10.100)           (interface sniff)         (Python thread)
      │                          │                        │
      │── Port Scan ─────────────►│                        │
      │── SYN Flood ──────────────►│                        │
@@ -1194,7 +1194,7 @@ Setiap skenario:
 09:00   — Semua normal (S1)
 09:05   — ESP32-03 traffic meningkat
 09:05:03 — Anomaly detected (Rule Engine)
-09:06   — Port scan dimulai dari 192.168.20.100 (S3)
+09:06   — Port scan dimulai dari 192.168.10.100 (S3)
 09:06:01 — Suricata → ALERT (signature match)
 09:06:02 — Unified Network Guard → HIGH ALERT
 09:06:02 — Dashboard → alert real-time
@@ -1339,8 +1339,8 @@ LOG_LEVEL=INFO
 Platform Unified Network Guard berhasil dibangun sebagai prototype laboratorium yang menggabungkan:
 
 - **3–5 ESP32** sebagai node IoT testbed
-- **TP-Link TL-WR840N** sebagai router jaringan IoT
-- **TP-Link TL-WR820N** sebagai router jaringan pengujian
+- **TP-Link TL-WR820N** sebagai router jaringan IoT
+- **TP-Link TL-WR840N** sebagai router jaringan pengujian
 - **PC Ryzen 5 5500GT** sebagai Edge Computing Security Node
 - **Eclipse Mosquitto** sebagai MQTT broker
 - **Scapy** untuk packet capture real-time

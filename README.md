@@ -184,8 +184,11 @@ Semua konfigurasi ada di `.env` (salin dari `.env.example`). Bagian penting:
 ```ini
 # Jaringan
 CAPTURE_INTERFACE=enp9s0          # interface capture trafik
-IOT_SUBNET=192.168.20.0/24        # subnet IoT yang dipantau
+IOT_SUBNET=192.168.20.0/24        # subnet IoT yang dipantau (TL-WR820N)
 GATEWAY_IP=192.168.20.1
+EDGE_PC_IP=192.168.20.100
+ATTACKER_SUBNET=192.168.10.0/24   # segmen pengujian attacker (TL-WR840N)
+ATTACKER_IP=192.168.10.100
 
 # MQTT
 MQTT_BROKER_HOST=localhost
@@ -217,7 +220,7 @@ PREDICTOR_POLL_INTERVAL=10
 
 # API
 API_KEY=GANTI_DENGAN_KEY_AMAN_MINIMAL_32_KARAKTER
-CORS_ORIGINS=http://localhost:3000,http://192.168.10.10:3000
+CORS_ORIGINS=http://localhost:3000,http://192.168.20.100:3000
 RATE_LIMIT_DEFAULT=120/minute
 RATE_LIMIT_HEAVY=30/minute
 WS_POLL_INTERVAL=2.0
@@ -335,7 +338,7 @@ Skema lengkap ada di `database/schema.sql`. 5 tabel utama:
 | `mqtt_telemetry` | Telemetri MQTT dari ESP32 (device_id, topic, payload JSONB) |
 | `ml_predictions` | Hasil prediksi ML (if_score, is_anomaly, attack_class, confidence, features JSONB) |
 
-Seed awal menambahkan 5 perangkat ESP32 (192.168.10.101–105). Index performa dibuat pada kolom timestamp yang paling sering di-query.
+Seed awal menambahkan 5 perangkat ESP32 (192.168.20.101–105). Index performa dibuat pada kolom timestamp yang paling sering di-query.
 
 Akses cepat ke DB:
 ```bash
@@ -352,7 +355,7 @@ Dokumen `DEMO_RUNBOOK.md` menetapkan prinsip berikut untuk presentasi:
 - **Simulasi ESP32** — perangkat nyata atau simulator; jelaskan mana yang dipakai.
 - **Serangan** — simulasi terkontrol, dijalankan hanya saat sesi demo, dari mesin penyerang terpisah, dan dihentikan setelah ditunjukkan.
 - **Timezone** — seluruh pipeline UTC; dashboard menampilkan waktu tersebut.
-- **Suricata rule** menarget subnet lab desain (`192.168.10.0/24`); pada jaringan live (`192.168.20.0/24`) hanya rule yang relevan topologi yang aktif.
+- **Suricata rule** menarget subnet IoT `192.168.20.0/24` (TL-WR820N, 192.168.20.1) yang dipantau; segmen pengujian attacker berada di subnet terpisah `192.168.10.0/24` (TL-WR840N, mesin penyerang 192.168.10.100).
 
 ---
 

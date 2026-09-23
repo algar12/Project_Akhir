@@ -79,9 +79,9 @@ CREATE INDEX IF NOT EXISTS idx_mlpred_anomaly
 -- Seed awal data perangkat IoT
 INSERT INTO devices (device_name, ip_address, device_type, status)
 VALUES 
-    ('ESP32-01', '192.168.10.101', 'Climate Sensor (Temp/Humidity)', 'registered'),
-    ('ESP32-02', '192.168.10.102', 'Security Sensor (Motion/Light)', 'registered'),
-    ('ESP32-03', '192.168.10.103', 'Energy Meter (Power/Voltage)', 'registered'),
-    ('ESP32-04', '192.168.10.104', 'Air Quality (CO2/PM2.5)', 'registered'),
-    ('ESP32-05', '192.168.10.105', 'Smart Actuator & Gateway', 'registered')
+    ('ESP32-01', '192.168.20.101', 'Climate Sensor (Temp/Humidity)', 'registered'),
+    ('ESP32-02', '192.168.20.102', 'Security Sensor (Motion/Light)', 'registered'),
+    ('ESP32-03', '192.168.20.103', 'Energy Meter (Power/Voltage)', 'registered'),
+    ('ESP32-04', '192.168.20.104', 'Air Quality (CO2/PM2.5)', 'registered'),
+    ('ESP32-05', '192.168.20.105', 'Heartbeat & Gateway Node', 'registered')
 ON CONFLICT (ip_address) DO NOTHING;

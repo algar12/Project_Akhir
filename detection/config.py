@@ -22,8 +22,8 @@ DATABASE_URL: str = (
 )
 
 # ─── Jaringan ─────────────────────────────────────────────────────────────────
-IOT_SUBNET: str  = os.getenv('IOT_SUBNET', '192.168.10.0/24')
-GATEWAY_IP: str  = os.getenv('GATEWAY_IP', '192.168.10.1')
+IOT_SUBNET: str  = os.getenv('IOT_SUBNET', '192.168.20.0/24')
+GATEWAY_IP: str  = os.getenv('GATEWAY_IP', '192.168.20.1')
 
 # ─── Suricata ─────────────────────────────────────────────────────────────────
 SURICATA_EVE_PATH: str = os.getenv(

@@ -13,7 +13,7 @@
 // ================= KONFIGURASI JARINGAN & BROKER =================
 const char* ssid          = "TP-Link_D38E";
 const char* password      = "12345678";
-const char* mqtt_broker   = "192.168.10.10";
+const char* mqtt_broker   = "192.168.20.100";       // IP Edge Computing PC (di subnet IoT)
 const int   mqtt_port     = 1883;
 const char* mqtt_topic    = "iot/esp32-03/telemetry";
 const char* client_id     = "ESP32-Node03-Energy";

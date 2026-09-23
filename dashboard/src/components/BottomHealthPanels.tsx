@@ -103,12 +103,12 @@ export default function BottomHealthPanels() {
               <span className="text-slate-500 text-[10px] font-mono">RAM 8GB</span>
             </div>
             <div className="flex justify-between items-center text-xs border-b border-white/5 pb-2 hover:bg-white/5 px-2 py-1 rounded transition-colors cursor-pointer">
-              <span className="text-slate-300 font-medium">TP-Link Router</span>
-              <span className="font-mono text-slate-400">TL-WR840N V6</span>
+              <span className="text-slate-300 font-medium">TP-Link Router (IoT)</span>
+              <span className="font-mono text-slate-400">TL-WR820N</span>
               <span className={`font-bold font-mono ${system ? 'text-green-400' : 'text-red-400'}`}>
                 {system ? 'ACTIVE' : 'OFFLINE'}
               </span>
-              <span className="text-slate-500 text-[10px] font-mono">Gateway</span>
+              <span className="text-slate-500 text-[10px] font-mono">192.168.20.1</span>
             </div>
             <div className="flex justify-between items-center text-xs border-b border-white/5 pb-2 hover:bg-white/5 px-2 py-1 rounded transition-colors cursor-pointer">
               <span className="text-slate-300 font-medium">ESP32 IoT Nodes</span>
