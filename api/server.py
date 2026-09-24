@@ -224,6 +224,8 @@ app.include_router(devices.router,     prefix=API_PREFIX)
 app.include_router(traffic.router,     prefix=API_PREFIX)
 app.include_router(alerts.router,      prefix=API_PREFIX)
 app.include_router(predictions.router, prefix=API_PREFIX)
+from api.routes import eval as eval_route  # noqa: E402
+app.include_router(eval_route.router,  prefix=API_PREFIX)
 
 
 # ─── Root: Health Check Publik ────────────────────────────────────────────────

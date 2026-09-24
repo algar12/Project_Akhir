@@ -33,6 +33,28 @@ Runbook untuk menghasilkan **Tabel 1** artikel IKOMTI dengan angka **nyata & juj
 
 ## 3. Alur eksekusi
 
+> **PILIH A: HP sebagai attacker (paling mudah, no-root)** atau **B: mesin terpisah 192.168.10.100**.
+>
+> ### A. HP Android via Termux (no-root, satu ketuk)
+>
+> 1. Di HP: install Termux (dari F-Droid), `pkg install -y python git`, clone proyek,
+>    jalankan `bash tools/termux_setup.sh` (sekali).
+> 2. Hubungkan HP ke WiFi **upstream TL-WR840N (192.168.10.1)** — BUKAN router IoT.
+> 3. Di Edge PC: `./ung.sh start --sim` (pastikan platform hidup).
+> 4. Di Termux HP, jalankan **eval penuh satu ketuk**:
+>    ```bash
+>    python tools/attacker.py --auto
+>    ```
+>    HP akan: panggil API Edge PC `session/start` → tunggu S1 5 menit → jalankan
+>    S2-S6 (5 repetisi, begin/end otomatis via API) → `session/finish`.
+>    Atau pakai menu interaktif: `python tools/attacker.py`
+> 5. Selesai: di Edge PC jalankan `python ml/evaluator_tabel1.py` lalu `artikel/fill_tabel1.py`.
+>
+> Teknik no-root: UDP/TCP connect via Python socket — tetap menghasilkan paket
+> SYN/UDP asli di wire → tertangkap collector Edge PC → memicu rule.
+>
+> ### B. Mesin attacker terpisah 192.168.10.100 (manual, butuh nmap/hping3/mosquitto)
+
 ### Langkah 1 — Start pipeline (5 terminal terpisah)
 
 ```bash
