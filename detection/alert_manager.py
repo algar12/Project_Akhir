@@ -186,10 +186,10 @@ class AlertManager:
         sql = text("""
             INSERT INTO alerts
                 (timestamp, source_ip, target_ip, attack_type,
-                 severity, confidence, description)
+                 severity, confidence, description, source)
             VALUES
                 (:timestamp, :source_ip, :target_ip, :attack_type,
-                 :severity, :confidence, :description)
+                 :severity, :confidence, :description, :source)
         """)
         params = {
             'timestamp':   alert.timestamp,
@@ -199,6 +199,7 @@ class AlertManager:
             'severity':    alert.severity,
             'confidence':  alert.confidence,
             'description': alert.description,
+            'source':      alert.source,
         }
         try:
             engine = _get_engine()

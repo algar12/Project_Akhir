@@ -106,8 +106,11 @@ alert tcp 192.168.20.0/24 any -> any !1883 \
      threshold:type threshold, track by_src, count 10, seconds 60; \
      classtype:policy-violation; sid:1000040; rev:1;)
 
-# 5.2 Traffic keluar dari IoT subnet ke internet (suspicious exfiltration)
-alert ip 192.168.20.0/24 any -> !192.168.0.0/16 any \
+# 5.2 Traffic keluar dari perangkat IoT (ESP32) ke internet (suspicious exfiltration)
+#     Sumber dibatasi ke 5 ESP32 (192.168.20.101-105) — Edge PC (192.168.20.100)
+#     dikecualikan karena sah browsing internet; gateway/broker (192.168.20.1/.100)
+#     sudah di dalam 192.168.0.0/16 sehingga tidak memicu rule ini.
+alert ip [192.168.20.101,192.168.20.102,192.168.20.103,192.168.20.104,192.168.20.105] any -> !192.168.0.0/16 any \
     (msg:"UNG-ALERT: IoT Device Connecting Outside Local Network"; \
      threshold:type threshold, track by_src, count 5, seconds 30; \
-     classtype:policy-violation; sid:1000041; rev:1;)
+     classtype:policy-violation; sid:1000041; rev:2;)

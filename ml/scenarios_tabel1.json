@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "description": "Definisi 6 skenario evaluasi S1-S6 sesuai paragraf 47 artikel IKOMTI. Dipakai oleh ml/evaluator_tabel1.py untuk mencocokkan keputusan deteksi tiap metode terhadap ground truth.",
+    "attacker_ip": "192.168.10.100",
+    "iot_subnet": "192.168.20.0/24",
+    "edge_pc_ip": "192.168.20.100",
+    "esp32_ips": ["192.168.20.101", "192.168.20.102", "192.168.20.103", "192.168.20.104", "192.168.20.105"],
+    "reps_per_scenario": 5,
+    "normal_window_seconds": 300,
+    "attack_window_seconds": 120,
+    "methods": ["suricata", "rule", "ml", "hibrida"],
+    "method_labels": {
+      "suricata": "Suricata (Signature)",
+      "rule": "Rule-Based (Threshold)",
+      "ml": "Isolation Forest (ML)",
+      "hibrida": "Hibrida (Usulan)"
+    }
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Normal (baseline)",
+      "ground_truth": "normal",
+      "is_attack": false,
+      "description": "Lalu lintas normal ESP32 + browsing. Tidak ada serangan. Dipakai mengukur False Positive Rate.",
+      "expected_no_alert": true,
+      "command": "(tidak ada perintah attacker — biarkan traffic normal ESP32 berjalan)"
+    },
+    {
+      "id": "S2",
+      "name": "Traffic Spike",
+      "ground_truth": "traffic_spike",
+      "is_attack": true,
+      "expected_attack_types": {
+        "suricata": ["DOS_ATTACK", "SYN_FLOOD", "ICMP_FLOOD"],
+        "rule": ["TRAFFIC_SPIKE"],
+        "ml": ["TRAFFIC_SPIKE"],
+        "hibrida": ["TRAFFIC_SPIKE", "DOS_ATTACK", "SYN_FLOOD", "ICMP_FLOOD"]
+      },
+      "command": "hping3 --udp --flood -d 1400 192.168.20.100   (ulang 5x, jeda 15-20s)",
+      "description": "Lonjakan byte melebihi pola normal (>5MB/5s). Aturan TRAFFIC_SPIKE aktif."
+    },
+    {
+      "id": "S3",
+      "name": "Port Scanning",
+      "ground_truth": "port_scan",
+      "is_attack": true,
+      "expected_attack_types": {
+        "suricata": ["PORT_SCAN"],
+        "rule": ["PORT_SCAN"],
+        "ml": ["PORT_SCAN"],
+        "hibrida": ["PORT_SCAN"]
+      },
+      "command": "nmap -sS -p 1-1000 192.168.20.100   (ulang 5x, target boleh .101-.105)",
+      "description": "TCP SYN scan ke banyak port dari attacker. Aturan PORT_SCAN aktif."
+    },
+    {
+      "id": "S4",
+      "name": "Traffic Flooding (SYN Flood)",
+      "ground_truth": "syn_flood",
+      "is_attack": true,
+      "expected_attack_types": {
+        "suricata": ["SYN_FLOOD"],
+        "rule": ["SYN_FLOOD"],
+        "ml": ["SYN_FLOOD"],
+        "hibrida": ["SYN_FLOOD"]
+      },
+      "command": "hping3 -S --flood -p 1883 192.168.20.100   (ulang 5x, jeda 15-20s)",
+      "description": "SYN flood ke broker MQTT/Edge PC. Aturan SYN_FLOOD aktif."
+    },
+    {
+      "id": "S5",
+      "name": "Unauthorized MQTT Client",
+      "ground_truth": "mqtt_anomaly",
+      "is_attack": true,
+      "expected_attack_types": {
+        "suricata": ["UNAUTHORIZED_MQTT", "MQTT_ANOMALY"],
+        "rule": ["MQTT_RATE_ABUSE"],
+        "ml": ["MQTT_ANOMALY"],
+        "hibrida": ["UNAUTHORIZED_MQTT", "MQTT_ANOMALY", "MQTT_RATE_ABUSE"]
+      },
+      "command": "mosquitto_pub -h 192.168.20.100 -t iot/esp32-01/telemetry -m '{\"fake\":true}' -u attacker -d   (ulang 5x)",
+      "description": "Klien MQTT tak berwenang menerbitkan ke topik perangkat lain (dari subnet attacker)."
+    },
+    {
+      "id": "S6",
+      "name": "MQTT Pattern Anomaly (Rate Abuse)",
+      "ground_truth": "mqtt_anomaly",
+      "is_attack": true,
+      "expected_attack_types": {
+        "suricata": ["MQTT_ANOMALY"],
+        "rule": ["MQTT_RATE_ABUSE"],
+        "ml": ["MQTT_ANOMALY"],
+        "hibrida": ["MQTT_ANOMALY", "MQTT_RATE_ABUSE"]
+      },
+      "command": "for i in $(seq 1 200); do mosquitto_pub -h 192.168.20.100 -t test/anomaly -m \"x\"; done   (ulang 5x)",
+      "description": "Lonjakan koneksi/pesan MQTT ke broker. Aturan MQTT_RATE_ABUSE aktif."
+    }
+  ]
+}

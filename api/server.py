@@ -67,6 +67,10 @@ async def lifespan(app: FastAPI):
                 ADD COLUMN IF NOT EXISTS mitigated_at TIMESTAMP
         """))
         db.execute(text("""
+            ALTER TABLE alerts
+                ADD COLUMN IF NOT EXISTS source VARCHAR(20) DEFAULT 'rule'
+        """))
+        db.execute(text("""
             UPDATE devices 
             SET status = 'offline' 
             WHERE status = 'online' 

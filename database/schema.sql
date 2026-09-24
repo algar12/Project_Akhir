@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS alerts (
     severity    VARCHAR(20)        NOT NULL, -- LOW, MEDIUM, HIGH, CRITICAL
     confidence  DOUBLE PRECISION   DEFAULT 1.0,
     description TEXT,
+    source      VARCHAR(20)        DEFAULT 'rule', -- 'rule' | 'suricata' | 'ml'
     mitigated   BOOLEAN            NOT NULL DEFAULT false,
     mitigated_at TIMESTAMP
 );
